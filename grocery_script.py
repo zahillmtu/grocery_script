@@ -66,6 +66,20 @@ def find_date():
     print("The first line of the file: ", line)
     line2 = f.readline()
     print("The second line of the file: ", line2)
+    
+    groc_day = int(line2[0:2])
+    groc_month = int(line2[3:5])
+    groc_year = int(line2[6:10])
+    print("groc_day: ", groc_day)
+    print("groc_month: ", groc_month)
+    print("groc_year: ", groc_year)
+    
+    # Check if date has passed
+    if (datetime(groc_year, groc_day, groc_month) < datetime.now()):
+        print ('THE DATE HAS PASSED')
+        # Send a reminder email
+    
+    
     print()
     f.close()
     
