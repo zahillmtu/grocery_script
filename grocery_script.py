@@ -23,7 +23,7 @@ except ImportError:
 SCOPES = 'https://www.googleapis.com/auth/drive'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Drive API Python Quickstart'
-FILE_LOC = 'test.txt' # Relative
+FILE_LOC = 'doc.txt' # Relative
 # C:/Users/Zach/Documents/groceryList/
 def get_credentials():
     """Gets valid user credentials from storage.
@@ -88,7 +88,7 @@ def main():
         print("Download %d%%." % int(status.progress() * 100))
         
         
-    # Now read test.txt to get information
+    # Now read doc.txt to get information
     find_date()
 
 if __name__ == '__main__':
