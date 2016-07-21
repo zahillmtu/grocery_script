@@ -58,7 +58,7 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
-def send_email():
+def send_email(message):
     """ Send an email notification 
         Example taken from here: http://naelshiab.com/tutorial-send-email-python/
     """
@@ -74,7 +74,7 @@ def send_email():
     msg['To'] = toaddr
     msg['Subject'] = 'Testing'
 
-    body = 'This is a test to send an email'
+    body = message
     msg.attach(MIMEText(body, 'plain'))
  
     server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -171,7 +171,7 @@ def main():
     
     update_response = update_request.execute()
     
-    send_email()
+    send_email('This goes in the email')
 
 if __name__ == '__main__':
     main()
