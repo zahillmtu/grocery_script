@@ -23,8 +23,8 @@ except ImportError:
 SCOPES = 'https://www.googleapis.com/auth/drive'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Drive API Python Quickstart'
-
-
+FILE_LOC = 'test.txt' # Relative
+# C:/Users/Zach/Documents/groceryList/
 def get_credentials():
     """Gets valid user credentials from storage.
 
@@ -51,7 +51,17 @@ def get_credentials():
         else: # Needed only for compatibility with Python 2.6
             credentials = tools.run(flow, store)
         print('Storing credentials to ' + credential_path)
-    return credentials    
+    return credentials
+
+def find_date():
+    """ Find the date from the first line of the google Doc """
+    
+    # Read in the first lind of the file
+    f = open(FILE_LOC, 'rb')
+    print ("Name of file: ", f.name)
+    
+    line = f.readline()
+    print ("The first line of the file: ", line)
     
 def main():
     """Shows basic usage of the Google Drive API.
@@ -70,15 +80,16 @@ def main():
     
     response = request.execute()
 
-    # where to save the file
-    filename = 'C:/Users/Zach/Documents/groceryList/test.txt'
-
-    fh = open(filename, 'wb')
+    fh = open(FILE_LOC, 'wb')
     downloader = MediaIoBaseDownload(fh, request)
     done = False
     while done is False:
         status, done = downloader.next_chunk()
         print("Download %d%%." % int(status.progress() * 100))
+        
+        
+    # Now read test.txt to get information
+    find_date()
 
 if __name__ == '__main__':
     main()
