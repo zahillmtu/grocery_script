@@ -5,6 +5,7 @@ import os
 import io
 import time
 from datetime import datetime
+from datetime import date
 
 from apiclient import discovery
 from apiclient.http import MediaIoBaseDownload
@@ -55,6 +56,11 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
+def send_email():
+    """ Send an email notification """
+    
+    
+    
 def find_date():
     """ Find the date from the first line of the google Doc """
     
@@ -74,10 +80,25 @@ def find_date():
     print("groc_month: ", groc_month)
     print("groc_year: ", groc_year)
     
-    # Check if date has passed
-    if (datetime(groc_year, groc_day, groc_month) < datetime.now()):
-        print ('THE DATE HAS PASSED')
+    #date_today = datetime.now().replace(second=0, microsecond=0) # strip off seconds
+    #doc_date = datetime(groc_year, groc_day, groc_month).replace(second=0, microsecond=0)
+    date_today = date.today()
+    doc_date = date(groc_year, groc_day, groc_month)
+    
+    print('Doc date: ', doc_date)
+    print(date_today)
+    # Check if date has passed, if so clear out if the day after
+    if (doc_date < date_today):
+        print('THE DATE HAS PASSED')
         # Send a reminder email
+    
+    print()
+    
+    print((doc_date - date_today).days)
+    # The purchase date should be a monday, so we need to send a reminder on Friday
+    # If the date is 3 days out, send a reminder
+    if ((doc_date - date_today).days == 3):
+        print('It should be Friday Today')
     
     
     print()
@@ -92,7 +113,7 @@ def find_date():
     
     f.close()
     
-    
+    return
     
 def main():
     """Shows basic usage of the Google Drive API.
