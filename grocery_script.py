@@ -4,8 +4,10 @@ import httplib2
 import os 
 import io
 import time
-from datetime import datetime
-from datetime import date
+from datetime import date # to compare dates
+import smtplib # for sending emails
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 from apiclient import discovery
 from apiclient.http import MediaIoBaseDownload
@@ -57,14 +59,36 @@ def get_credentials():
     return credentials
 
 def send_email():
-    """ Send an email notification """
+    """ Send an email notification 
+        Example taken from here: http://naelshiab.com/tutorial-send-email-python/
+    """
     
+    send_to = 'pswaregrocery@gmail.com'
+    send_from = 'pswaregrocery@gmail.com'
+    password = 'grpsware'
+
+    fromaddr = 'pswaregrocery@gmail.com'
+    toaddr = 'pswaregrocery@gmail.com'
+    msg = MIMEMultipart()
+    msg['From'] = fromaddr
+    msg['To'] = toaddr
+    msg['Subject'] = 'Testing'
+
+    body = 'This is a test to send an email'
+    msg.attach(MIMEText(body, 'plain'))
+ 
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(fromaddr, password)
+    text = msg.as_string()
+    server.sendmail(fromaddr, toaddr, text)
+    server.quit()
     
     
 def find_date():
     """ Find the date from the first line of the google Doc """
     
-    # Read in the first lind of the file
+    # Read in the second line of the file
     f = open(FILE_LOC, 'r', encoding="utf-8-sig")
     print("Name of file: ", f.name)
     
@@ -80,8 +104,6 @@ def find_date():
     print("groc_month: ", groc_month)
     print("groc_year: ", groc_year)
     
-    #date_today = datetime.now().replace(second=0, microsecond=0) # strip off seconds
-    #doc_date = datetime(groc_year, groc_day, groc_month).replace(second=0, microsecond=0)
     date_today = date.today()
     doc_date = date(groc_year, groc_day, groc_month)
     
@@ -148,6 +170,8 @@ def main():
     update_request = service.files().update(fileId=file_id, media_body=FILE_LOC)
     
     update_response = update_request.execute()
+    
+    send_email()
 
 if __name__ == '__main__':
     main()
