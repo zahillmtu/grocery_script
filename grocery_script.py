@@ -3,6 +3,8 @@ from __future__ import print_function
 import httplib2
 import os 
 import io
+import time
+from datetime import datetime
 
 from apiclient import discovery
 from apiclient.http import MediaIoBaseDownload
@@ -57,11 +59,20 @@ def find_date():
     """ Find the date from the first line of the google Doc """
     
     # Read in the first lind of the file
-    f = open(FILE_LOC, 'rb')
-    print ("Name of file: ", f.name)
+    f = open(FILE_LOC, 'r', encoding="utf-8-sig")
+    print("Name of file: ", f.name)
     
     line = f.readline()
-    print ("The first line of the file: ", line)
+    print("The first line of the file: ", line)
+    line2 = f.readline()
+    print("The second line of the file: ", line2)
+    print()
+
+    # Find the current date
+    cur_date = time.strftime("%x")
+    print(cur_date)
+    
+    f.close()
     
 def main():
     """Shows basic usage of the Google Drive API.
@@ -73,8 +84,8 @@ def main():
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('drive', 'v3', http=http)
 
-    file_id = '1cxgbJZKnysKOKBDg-ZbV1E3S4B-iAG7XY-1x7U8Yfsg' # For the grocery doc
-    #file_id = '18r3cUWKbMaWVYtNKLJjxZFHB2m7y1QJdkSPlrU197PA' # For the test doc
+    #file_id = '1cxgbJZKnysKOKBDg-ZbV1E3S4B-iAG7XY-1x7U8Yfsg' # For the grocery doc
+    file_id = '18r3cUWKbMaWVYtNKLJjxZFHB2m7y1QJdkSPlrU197PA' # For the test doc
 
     request = service.files().export_media(fileId=file_id, mimeType='text/plain')
     
@@ -88,6 +99,7 @@ def main():
         print("Download %d%%." % int(status.progress() * 100))
         
         
+    fh.close()
     # Now read doc.txt to get information
     find_date()
 
