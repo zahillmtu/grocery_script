@@ -67,12 +67,18 @@ def find_date():
     line2 = f.readline()
     print("The second line of the file: ", line2)
     print()
+    f.close()
+    
+    f = open(FILE_LOC, 'a', encoding="utf-8-sig")
+    f.write('I wrote this to the file\n')
 
     # Find the current date
     cur_date = time.strftime("%x")
     print(cur_date)
     
     f.close()
+    
+    
     
 def main():
     """Shows basic usage of the Google Drive API.
@@ -102,6 +108,11 @@ def main():
     fh.close()
     # Now read doc.txt to get information
     find_date()
+    
+    # Upload the file back
+    update_request = service.files().update(fileId=file_id, media_body=FILE_LOC)
+    
+    update_response = update_request.execute()
 
 if __name__ == '__main__':
     main()
