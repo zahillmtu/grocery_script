@@ -101,6 +101,11 @@ def find_date():
     m1 = re.search('.*?(\d+\/\d+\/\d+)', line)
     if m1:
         whole_date = m1.groups()[0]
+    else:
+        # The script can't find the date, most likely because it is not
+        # formatted correctly or is not in the first line
+        send_email('The date is not formatted properly')
+        return
     
     groc_day = int(whole_date[0:2])
     groc_month = int(whole_date[3:5])
