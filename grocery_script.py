@@ -3,6 +3,7 @@ from __future__ import print_function
 import httplib2
 import os 
 import io
+import re
 import time
 from datetime import date # to compare dates
 import smtplib # for sending emails
@@ -94,12 +95,16 @@ def find_date():
     
     line = f.readline()
     print("The first line of the file: ", line)
-    line2 = f.readline()
-    print("The second line of the file: ", line2)
     
-    groc_day = int(line2[0:2])
-    groc_month = int(line2[3:5])
-    groc_year = int(line2[6:10])
+    # Search the first line of code for the date
+    # Code example given by Matt Mead
+    m1 = re.search('.*?(\d+\/\d+\/\d+)', line)
+    if m1:
+        whole_date = m1.groups()[0]
+    
+    groc_day = int(whole_date[0:2])
+    groc_month = int(whole_date[3:5])
+    groc_year = int(whole_date[6:10])
     print("groc_day: ", groc_day)
     print("groc_month: ", groc_month)
     print("groc_year: ", groc_year)
