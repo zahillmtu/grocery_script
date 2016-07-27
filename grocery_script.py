@@ -1,7 +1,8 @@
+#!python3
 # Example api usage from google.com
 from __future__ import print_function
 import httplib2
-import os 
+import os
 import io
 import re
 import time
@@ -60,10 +61,10 @@ def get_credentials():
     return credentials
 
 def send_email(message):
-    """ Send an email notification 
+    """ Send an email notification
         Example taken from here: http://naelshiab.com/tutorial-send-email-python/
     """
-    
+
     send_to = 'pswaregrocery@gmail.com'
     send_from = 'pswaregrocery@gmail.com'
     password = 'grpsware'
@@ -77,25 +78,75 @@ def send_email(message):
 
     body = message
     msg.attach(MIMEText(body, 'plain'))
- 
+
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
     server.login(fromaddr, password)
     text = msg.as_string()
     server.sendmail(fromaddr, toaddr, text)
     server.quit()
-    
-    
+
+def find_dash_ln(fileName, dash_num):
+    """Method to find the line number of the location of dashes
+    in the text documents. The second argument is used to specify
+    if finding the first or second set of dashes.
+
+    If no dashes are found will return -1, otherwise returns line number
+    """
+    counter = 0
+
+    with open(fileName, 'r') as file:
+        for num, line in enumerate(file, 1):
+            m1 = re.search('---+---', line)
+            if m1:
+                if (dash_num == 1):
+                    return num
+                elif (dash_num == 2 and counter == 1):
+                    return num
+                else:
+                    counter = counter + 1
+
+    return -1 # if here no TEST PROCEDURE found
+
+
+def erase_content():
+    """Erase the content between the first and second '---'
+    ----------------------------
+    This content will be erased
+    ----------------------------
+    """
+
+    # Read in the file data
+    with open(FILE_LOC, 'r') as fin:
+        data = fin.read().splitlines(True)
+
+    # Find the dash line numbers
+    d_line1 = find_dash_ln(FILE_LOC, 1)
+    if (d_line1 == -1):
+        # ERROR
+        print('ERROR: Could not find first line of dashes in file')
+    d_line2 = find_dash_ln(FILE_LOC, 2)
+    if (d_line2 == -1):
+        # ERROR
+        print('ERROR: Could not find second line of dashes in file')
+
+    # Write the contents outside the dashes back to file
+    with open(FILE_LOC, 'w') as fout:
+        fout.writelines(data[:d_line1])
+        fout.writelines('\n')
+        fout.writelines(data[d_line2 - 1:])
+
+
 def find_date():
     """ Find the date from the first line of the google Doc """
-    
+
     # Read in the second line of the file
     f = open(FILE_LOC, 'r', encoding="utf-8-sig")
     print("Name of file: ", f.name)
-    
+
     line = f.readline()
     print("The first line of the file: ", line)
-    
+
     # Search the first line of code for the date
     # Code example given by Matt Mead
     m1 = re.search('.*?(\d+\/\d+\/\d+)', line)
@@ -106,47 +157,47 @@ def find_date():
         # formatted correctly or is not in the first line
         send_email('The date is not formatted properly')
         return
-    
+
     groc_day = int(whole_date[0:2])
     groc_month = int(whole_date[3:5])
     groc_year = int(whole_date[6:10])
     print("groc_day: ", groc_day)
     print("groc_month: ", groc_month)
     print("groc_year: ", groc_year)
-    
+
     date_today = date.today()
     doc_date = date(groc_year, groc_day, groc_month)
-    
+
     print('Doc date: ', doc_date)
     print(date_today)
     # Check if date has passed, if so clear out if the day after
     if (doc_date < date_today):
         print('THE DATE HAS PASSED')
         # Send a reminder email
-    
+
     print()
-    
+
     print((doc_date - date_today).days)
     # The purchase date should be a monday, so we need to send a reminder on Friday
     # If the date is 3 days out, send a reminder
     if ((doc_date - date_today).days == 3):
         print('It should be Friday Today')
-    
-    
+
+
     print()
     f.close()
-    
+
     f = open(FILE_LOC, 'a', encoding="utf-8-sig")
     f.write('I wrote this to the file\n')
 
     # Find the current date
     cur_date = time.strftime("%x")
     print(cur_date)
-    
+
     f.close()
-    
+
     return
-    
+
 def main():
     """Shows basic usage of the Google Drive API.
 
@@ -161,7 +212,7 @@ def main():
     file_id = '18r3cUWKbMaWVYtNKLJjxZFHB2m7y1QJdkSPlrU197PA' # For the test doc
 
     request = service.files().export_media(fileId=file_id, mimeType='text/plain')
-    
+
     response = request.execute()
 
     fh = open(FILE_LOC, 'wb')
@@ -170,17 +221,21 @@ def main():
     while done is False:
         status, done = downloader.next_chunk()
         print("Download %d%%." % int(status.progress() * 100))
-        
-        
+
+
     fh.close()
     # Now read doc.txt to get information
     find_date()
-    
+
+    # erase what's inside
+    if (True):
+        erase_content()
+
     # Upload the file back
     update_request = service.files().update(fileId=file_id, media_body=FILE_LOC)
-    
+
     update_response = update_request.execute()
-    
+
     send_email('This goes in the email')
 
 if __name__ == '__main__':
