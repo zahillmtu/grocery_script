@@ -106,7 +106,7 @@ def find_dash_ln(fileName, dash_num):
                 else:
                     counter = counter + 1
 
-    return -1 # if here no TEST PROCEDURE found
+    return -1 # if here no dashes found
 
 
 def erase_content():
