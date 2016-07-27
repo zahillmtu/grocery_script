@@ -173,7 +173,8 @@ def find_date():
     # Check if date has passed, if so clear out if the day after
     if (doc_date < date_today):
         print('THE DATE HAS PASSED')
-        # Send a reminder email
+        # Clear out old grocery list
+        erase_content()
 
     print()
 
@@ -183,18 +184,12 @@ def find_date():
     if ((doc_date - date_today).days == 3):
         print('It should be Friday Today')
 
-
     print()
     f.close()
-
-    f = open(FILE_LOC, 'a', encoding="utf-8-sig")
-    f.write('I wrote this to the file\n')
 
     # Find the current date
     cur_date = time.strftime("%x")
     print(cur_date)
-
-    f.close()
 
     return
 
@@ -227,16 +222,10 @@ def main():
     # Now read doc.txt to get information
     find_date()
 
-    # erase what's inside
-    if (True):
-        erase_content()
-
     # Upload the file back
     update_request = service.files().update(fileId=file_id, media_body=FILE_LOC)
 
     update_response = update_request.execute()
-
-    send_email('This goes in the email')
 
 if __name__ == '__main__':
     main()
