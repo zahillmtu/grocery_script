@@ -95,7 +95,7 @@ def find_dash_ln(fileName, dash_num):
     """
     counter = 0
 
-    with open(fileName, 'r') as file:
+    with open(fileName, 'r', encoding='utf-8') as file:
         for num, line in enumerate(file, 1):
             m1 = re.search('---+---', line)
             if m1:
@@ -117,7 +117,7 @@ def erase_content():
     """
 
     # Read in the file data
-    with open(FILE_LOC, 'r') as fin:
+    with open(FILE_LOC, 'r', encoding='utf-8') as fin:
         data = fin.read().splitlines(True)
 
     # Find the dash line numbers
@@ -131,7 +131,7 @@ def erase_content():
         print('ERROR: Could not find second line of dashes in file')
 
     # Write the contents outside the dashes back to file
-    with open(FILE_LOC, 'w') as fout:
+    with open(FILE_LOC, 'w', encoding='utf-8') as fout:
         fout.writelines(data[:d_line1])
         fout.writelines('\n')
         fout.writelines(data[d_line2 - 1:])
@@ -141,11 +141,11 @@ def find_date():
     """ Find the date from the first line of the google Doc """
 
     # Read in the second line of the file
-    f = open(FILE_LOC, 'r', encoding="utf-8-sig")
+    f = open(FILE_LOC, 'r', encoding="utf-8")
     print("Name of file: ", f.name)
 
     line = f.readline()
-    print("The first line of the file: ", line)
+    #print("The first line of the file: ", line)
 
     # Search the first line of code for the date
     # Code example given by Matt Mead
@@ -215,7 +215,7 @@ def main():
     done = False
     while done is False:
         status, done = downloader.next_chunk()
-        print("Download %d%%." % int(status.progress() * 100))
+        print("Download %.4f%%." % (status.progress() * 100.0))
 
 
     fh.close()
