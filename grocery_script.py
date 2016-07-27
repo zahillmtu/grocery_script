@@ -160,7 +160,7 @@ def find_date():
 
     groc_day = int(whole_date[0:2])
     groc_month = int(whole_date[3:5])
-    groc_year = int(whole_date[6:10])
+    groc_year = int(whole_date[6:10]) + 2000
     print("groc_day: ", groc_day)
     print("groc_month: ", groc_month)
     print("groc_year: ", groc_year)
@@ -215,7 +215,7 @@ def main():
     done = False
     while done is False:
         status, done = downloader.next_chunk()
-        print("Download %.4f%%." % (status.progress() * 100.0))
+        print("Download %.2f%%." % (status.progress() * 100.0))
 
 
     fh.close()
